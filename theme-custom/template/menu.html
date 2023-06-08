@@ -1,0 +1,51 @@
+{{define "theme-custom/menu"}}
+<header class="mdui-appbar mdui-appbar-fixed">
+    <div class="mdui-toolbar mdui-color-theme">
+        <button class="mdui-btn mdui-btn-icon mdui-ripple" mdui-drawer="{target:'#mdui-drawer',swipe:true,overlay:true}"><i class="mdui-icon material-icons">&#xe5d2;</i></button>
+        <a href="/" class="mdui-typo-title">{{.Conf.Site.Brand}}</a>
+        <div class="mdui-toolbar-spacer"></div>
+        <button class="mdui-btn mdui-btn-icon mdui-ripple" onclick="toggleDarkMode(this)"><i class="mdui-icon material-icons"><script>document.write((userTheme === 'true' ? '&#xe3a9;' : userTheme === 'false' ? '&#xe3ac;' : '&#xe1ab;'))</script></i></button>
+    </div>
+</header>
+
+<drawer class="mdui-drawer mdui-drawer-full-height mdui-drawer-close" id="mdui-drawer">
+    <div class="mdui-card mdui-shadow-0" style="height:149px;border-radius:0">
+        <div class="mdui-card-media">
+            <img src="/static/theme-custom/card.webp"/>
+            <div class="mdui-card-media-covered">
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">{{if .Admin}}{{.Admin.Name}}{{else}}{{.Conf.Site.Brand}}{{end}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mdui-list">
+        <a href="/" class="mdui-list-item mdui-ripple{{if eq .MatchedPath "/"}} mdui-list-item-active{{end}}">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe88a;</i>
+            <div class="mdui-list-item-content">{{tr "Home"}}</div>
+        </a>
+        <a href="/service" class="mdui-list-item mdui-ripple{{if eq .MatchedPath "/service"}} mdui-list-item-active{{end}}">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe0e5;</i>
+            <div class="mdui-list-item-content">{{tr "Services"}}</div>
+        </a>
+        {{if .Admin}}
+        <a href="/server" class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe7fd;</i>
+            <div class="mdui-list-item-content">{{tr "AdminPanel"}}</div>
+        </a>
+        <a class="mdui-list-item mdui-ripple" onclick="showConfirm('{{tr "ConfirmLogout"}}','{{tr "AfterLoggingOutYouHaveToLoginAgain"}}',logout,{{.Admin.ID}})">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe879;</i>
+            <div class="mdui-list-item-content">{{tr "Logout"}}</div>
+        </a>
+        {{else}}
+        <a href="/login" class="mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">&#xe879;</i>
+            <div class="mdui-list-item-content">{{tr "Login"}}</div>
+        </a>
+        {{end}}
+    </div>
+</drawer>
+
+<main class="mdui-container mdui-m-t-2 mdui-m-b-2">
+    {{end}}

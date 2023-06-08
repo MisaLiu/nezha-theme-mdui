@@ -1,0 +1,208 @@
+{{define "theme-custom/home"}}
+{{template "theme-custom/header" .}}
+{{if ts .CustomCode}} {{.CustomCode|safe}} {{end}}
+{{template "theme-custom/menu" .}}
+
+<div id="app">
+  <div class="mdui-panel" mdui-panel>
+    <div class="mdui-panel-item mdui-panel-item-open" v-for="group in groups">
+      <div class="mdui-panel-item-header">
+        <div class="mdui-panel-item-title">@#(group.Tag!==''?group.Tag:'{{tr "Default"}}')#@</div>
+        <i class="mdui-panel-item-arrow mdui-icon material-icons">&#xe313;</i>
+      </div>
+
+      <div class="mdui-panel-item-body">
+        <div class="mdui-row">
+          <div class="mdui-col-xs-12 mdui-col-sm-6 mdui-col-md-4" v-for="server in group.data">
+            <div class="mdui-card mdui-m-b-2" :id="server.ID">
+              <div class="mdui-card-content">
+                <div class="mdui-typo-title mdui-text-truncase">@#server.Name + (server.live?'':'[{{tr "Offline"}}]')#@</div>
+
+                <div class="value-display">
+                  <p class="mdui-text-truncase">CPU: @#formatPercent(server.live,server.State.CPU,100).percent#@%</p>
+                  <div class="mdui-progress">
+                    <div :class="formatPercent(server.live,server.State.CPU,100).class" :style="formatPercent(server.live,server.State.CPU,100).style"></div>
+                  </div>
+                </div>
+                <div class="value-display">
+                  <p class="mdui-text-truncase">{{tr "MemUsed"}}: @#parseInt(server.State?server.State.MemUsed/server.Host.MemTotal*100:0)#@%</p>
+                  <div class="mdui-progress">
+                    <div :class="formatPercent(server.live,server.State.MemUsed,server.Host.MemTotal).class" :style="formatPercent(server.live,server.State.MemUsed,server.Host.MemTotal).style"></div>
+                  </div>
+                </div>
+                <div class="value-display">
+                  <p class="mdui-text-truncase">{{tr "SwapUsed"}}: @#parseInt(server.State?server.State.SwapUsed/server.Host.SwapTotal*100:0)#@%</p>
+                  <div class="mdui-progress">
+                    <div :class="formatPercent(server.live,server.State.SwapUsed,server.Host.SwapTotal).class" :style="formatPercent(server.live,server.State.SwapUsed,server.Host.SwapTotal).style"></div>
+                  </div>
+                </div>
+                <div class="value-display">
+                  <p class="mdui-text-truncase">{{tr "DiskUsed"}}: @#parseInt(server.State?server.State.DiskUsed/server.Host.DiskTotal*100:0)#@%</p>
+                  <div class="mdui-progress">
+                    <div :class="formatPercent(server.live,server.State.DiskUsed,server.Host.DiskTotal).class" :style="formatPercent(server.live,server.State.DiskUsed,server.Host.DiskTotal).style"></div>
+                  </div>
+                </div>
+
+                <p class="info-display mdui-text-truncase">
+                  <i class="mdui-icon material-icons mdui-m-r-1">&#xe30a;</i>{{tr "Platform"}}: @#server.Host.Platform#@-@#server.Host.PlatformVersion#@<br>
+                  <i class="mdui-icon material-icons mdui-m-r-1">&#xe192;</i>{{tr "Uptime"}}: @#secondToDate(server.State.Uptime)#@
+                </p>
+
+                <p class="info-display mdui-text-truncase">
+                  <i class="mdui-icon material-icons">&#xe5d8;</i>@#formatByteSize(server.State.NetOutSpeed)#@/s (@#formatByteSize(server.State.NetOutTransfer)#@)<br>
+                  <i class="mdui-icon material-icons">&#xe5db;</i>@#formatByteSize(server.State.NetInSpeed)#@/s (@#formatByteSize(server.State.NetInTransfer)#@)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{template "theme-custom/footer" .}}
+<script>
+  const initData = JSON.parse('{{.Servers}}').servers;
+  var statusCards = new Vue({
+    el: '#app',
+    delimiters: ['@#', '#@'],
+    data: {
+      data: initData,
+      groups: [],
+      tooltips:  {}
+    },
+    created() {
+      this.group()
+    },
+    mounted() {
+      mdui.mutation(this.el);
+      mdui.$('#app .mdui-card > .mdui-card-content > .mdui-typo-title.mdui-text-truncase').each((i, e) =>
+      {
+        this.tooltips[i] = new mdui.Tooltip(e, { content: 'Loading...' });
+      });
+    },
+    methods: {
+      toFixed2(f) {
+        return f.toFixed(2)
+      },
+      isWindowsPlatform(str) {
+        return str.includes('Windows')
+      },
+      group() {
+        this.groups = groupingData(this.data, "Tag")
+      },
+      formatPercent(live, used, total) {
+        const percent = live ? (parseInt(used / total * 100) || 0) : -1
+        const result = {
+          class: {
+            'mdui-progress-determinate': true,
+          },
+          style: {
+            width: percent + '% !important'
+          },
+          percent
+        }
+        if (percent < 0)
+        {
+          result.class['mdui-progress-indeterminate'] = true;
+          result.class['mdui-progress-determinate'] = false;
+
+          delete result.style.width;
+        }
+        return result;
+      },
+      secondToDate(s) {
+        var d = Math.floor(s / 3600 / 24);
+        if (d > 0) {
+          return d + " {{tr "Day"}}"
+        }
+        var h = Math.floor(s / 3600 % 24);
+        var m = Math.floor(s / 60 % 60);
+        var s = Math.floor(s % 60);
+        return h + ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
+      },
+      formatTimestamp(t) {
+        return new Date(t * 1000).toLocaleString()
+      },
+      formatByteSize(bs) {
+        const x = readableBytes(bs)
+        return x != "NaN undefined" ? x : '0B'
+      }
+    }
+  })
+
+  function groupingData(data, field) {
+    let map = {};
+    let dest = [];
+    data.forEach(item => {
+      if (!map[item[field]]) {
+        dest.push({
+          [field]: item[field],
+          data: [item]
+        });
+        map[item[field]] = item;
+      } else {
+        dest.forEach(dItem => {
+          if (dItem[field] == item[field]) {
+            dItem.data.push(item);
+          }
+        });
+      }
+    })
+    return dest;
+  }
+
+  function formatTooltip(server) {
+    return '{{tr "Platform"}}: ' + server.Host.Platform + '-' + server.Host.PlatformVersion +
+      ' [' + (server.Host.Virtualization ? server.Host.Virtualization + ':' : '') + server.Host.Arch + ']<br>' +
+      'CPU: ' + server.Host.CPU + '<br>' +
+      '{{tr "DiskUsed"}}: ' + statusCards.formatByteSize(server.State.DiskUsed) + ' / ' + statusCards.formatByteSize(server.Host.DiskTotal) + '<br>' +
+      '{{tr "MemUsed"}}: ' + statusCards.formatByteSize(server.State.MemUsed) + ' / ' + statusCards.formatByteSize(server.Host.MemTotal) + '<br>' +
+      '{{tr "SwapUsed"}}: ' + statusCards.formatByteSize(server.State.SwapUsed) + ' / ' + statusCards.formatByteSize(server.Host.SwapTotal) + '<br>' +
+      '{{tr "Load"}}: ' + statusCards.toFixed2(server.State.Load1) + ' / ' + statusCards.toFixed2(server.State.Load5) + ' / ' + statusCards.toFixed2(server.State.Load15) + '<br>' +
+      '{{tr "ProcessCount"}}: ' + server.State.ProcessCount + '<br>' +
+      '{{tr "BootTime"}}: ' + statusCards.formatTimestamp(server.Host.BootTime) + '<br>' +
+      '{{tr "LastActive"}}: ' + new Date(server.LastActive).toLocaleString() + '<br>' +
+      '{{tr "Version"}}: ' + server.Host.Version;
+  }
+
+  const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
+  const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws');
+  ws.onopen = function (evt) {
+    mdui.snackbar({
+      message: '{{tr "RealtimeChannelEstablished"}}'
+    });
+  }
+  ws.onmessage = function (evt) {
+    const oldServers = statusCards.servers
+    const data = JSON.parse(evt.data)
+    statusCards.servers = data.servers
+    for (let i = 0; i < statusCards.servers.length; i++) {
+      const ns = statusCards.servers[i];
+      const tooltip = statusCards.tooltips[i];
+      if (!ns.Host) ns.live = false
+      else {
+        const lastActive = new Date(ns.LastActive).getTime()
+        if (data.now - lastActive > 10 * 1000) {
+          ns.live = false
+        } else {
+          ns.live = true
+        }
+      }
+
+      if (ns.live) {
+        tooltip.$element.html(formatTooltip(ns));
+      } else {
+        tooltip.$element.text('{{tr "Offline"}}');
+      }
+    }
+    statusCards.groups = groupingData(statusCards.servers, "Tag")
+  }
+  ws.onclose = function () {
+    mdui.snackbar({
+      message: '{{tr "RealtimeChannelDisconnect"}}'
+    });
+  }
+</script>
+{{end}}

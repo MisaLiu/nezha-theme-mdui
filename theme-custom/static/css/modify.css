@@ -1,0 +1,41 @@
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+body .mdui-drawer,
+body.mdui-theme-layout-light .mdui-drawer {
+    background-color: #FFF;
+}
+body.mdui-theme-layout-dark .mdui-drawer {
+    background-color: #303030;
+}
+@media (prefers-color-scheme: dark) {
+    body.mdui-theme-layout-auto .mdui-drawer {
+        background-color: #303030;
+    }
+}
+
+.mdui-card-content .value-display {
+    margin: 12px 0 0 0;
+}
+.mdui-card-content .value-display p {
+    margin: 0;
+}
+
+.mdui-card-content .info-display {
+    margin: 12px 0 0 0;
+}
+.mdui-card-content .info-display .mdui-icon {
+    font-size: 22px;
+}
+
+.mdui-card.status-card {
+    display: inline-block;
+    display: -webkit-inline-box;
+    width: 20px;
+    height: 20px;
+}

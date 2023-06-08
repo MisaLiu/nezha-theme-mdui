@@ -1,0 +1,43 @@
+{{define "theme-custom/service"}}
+{{template "theme-custom/header" .}}
+{{if ts .CustomCode}}
+{{.CustomCode|safe}}
+{{end}}
+{{template "theme-custom/menu" .}}
+
+<div class="mdui-table-fluid">
+    <table class="mdui-table mdui-table-hoverable">
+        <thead>
+            <tr>
+                <th nowrap>{{tr "Name"}}</th>
+                <th nowrap>{{tr "30DaysOnline"}}</th>
+                <th nowrap>{{tr "Details"}}</th>
+                <th nowrap>{{tr "Status"}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range $service := .Services}}
+            <tr>
+                <td nowrap>{{$service.Monitor.Name}}</td>
+                <td nowrap>{{$service.TotalUptime|float32f}}%</td>
+                <td nowrap>
+                    {{range $i,$d := $service.Delay}}
+                        <div
+                            class="mdui-card status-card mdui-shadow-0 mdui-color-{{if (index $service.Up $i)}}green-500{{else}}{{if (index $service.Down $i)}}red-500{{else}}theme-disabled{{end}}{{end}}"
+                            mdui-tooltip="{content:'{{dayBefore $i}}, {{tr "Availability"}}:{{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}%, {{tr "AverageLatency"}}:{{float32f $d}}ms'}"
+                        ></div>
+                    {{end}}
+                </td>
+                <td nowrap>
+                    <span class="mdui-text-color-{{if $service.CurrentUp}}green-500{{else}}{{if $service.CurrentDown}}red-500{{else}}theme-disabled{{end}}{{end}}">
+                        {{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}
+                    </span>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+
+{{template "theme-custom/footer" .}}
+{{end}}

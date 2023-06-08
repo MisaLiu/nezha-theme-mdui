@@ -1,0 +1,43 @@
+{{define "theme-custom/header"}}
+<!DOCTYPE html>
+<html lang="{{.Conf.Language}}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta content="telephone=no" name="format-detection">
+    <title>{{.Title}}</title>
+    <link rel="shortcut icon" type="image/png" href="/static/logo.svg?v20210804" />
+    <link rel="stylesheet" href="/static/theme-custom/css/mdui.min.css" />
+    <link rel="stylesheet" href="/static/theme-custom/css/modify.css?v20210804" />
+    <script>
+        function setCookie(cname, cvalue) {
+            let d = new Date();
+            d.setTime(d.getTime() + 2592000000);
+            let expires = 'expires=' + d.toGMTString();
+            document.cookie = cname + '=' + cvalue + '; ' + expires;
+        }
+
+        function getCookie(cname) {
+            let name = cname + '=';
+            let ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++)  {
+                let c = ca[i].trim();
+                if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+            }
+            return '';
+        }
+    </script>
+</head>
+
+<body class="mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-pink mdui-theme-layout-auto">
+    <script>
+        const body = document.querySelector('body');
+        const userTheme = getCookie('is_darkmode');
+        if (userTheme !== '') {
+            body.classList.remove('mdui-theme-layout-auto');
+            body.classList.add('mdui-theme-layout-' + (userTheme == 'true' ? 'dark' : 'light'));
+        }
+    </script>
+    {{end}}

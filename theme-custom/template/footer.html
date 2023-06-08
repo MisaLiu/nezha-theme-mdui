@@ -1,0 +1,24 @@
+{{define "theme-custom/footer"}}
+</main>
+
+<div class="mdui-divider"></div>
+<footer class="mdui-container mdui-p-t-2 mdui-p-b-2 mdui-typo mdui-text-center">
+    <b>&copy; <a href="/">{{.Conf.Site.Brand}}</a></b> | Powered by <a
+        href="https://github.com/naiba/nezha" target="_blank">{{tr "NezhaMonitoring"}}</a>
+    {{.Version}}
+    <br>
+    Theme by <a href="https://github.com/MisaLiu/nezha-theme-mdui" target="_blank">MisaLiu</a>
+</footer>
+
+<script src="https://cdn.staticfile.org/vue/2.6.14/vue.min.js"></script>
+<script src="/static/theme-custom/js/mdui.min.js"></script>
+<script src="/static/theme-custom/js/main.js?v20230417"></script>
+<script>
+    (function () {
+        updateLang({{.LANG }});
+    })();
+</script>
+</body>
+
+</html>
+{{end}}
