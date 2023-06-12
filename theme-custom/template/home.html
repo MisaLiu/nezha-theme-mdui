@@ -14,7 +14,7 @@
       <div class="mdui-panel-item-body">
         <div class="mdui-row">
           <div class="mdui-col-xs-12 mdui-col-sm-6 mdui-col-md-4" v-for="server in group.data">
-            <div class="mdui-card mdui-m-b-2" :id="server.ID">
+            <div class="mdui-card mdui-m-b-2" :id="'servers-' + server.ID">
               <div class="mdui-card-content">
                 <div class="mdui-typo-title mdui-text-truncase">@#server.Name + (server.live?'':'[{{tr "Offline"}}]')#@</div>
 
@@ -77,9 +77,14 @@
     },
     mounted() {
       mdui.mutation(this.el);
-      mdui.$('#app .mdui-card > .mdui-card-content > .mdui-typo-title.mdui-text-truncase').each((i, e) =>
+      mdui.$('#app .mdui-card[id^="servers-"] > .mdui-card-content > .mdui-typo-title.mdui-text-truncase').each((i, _e) =>
       {
-        this.tooltips[i] = new mdui.Tooltip(e, { content: 'Loading...' });
+        const e = mdui.$(_e);
+        const id = /servers-(\d+)/.exec(e.parent().parent().attr('id'))[1];
+
+        if (!id || id <= 0) return true;
+
+        this.tooltips[id] = new mdui.Tooltip(e, { content: 'Loading...' });
       });
     },
     methods: {
@@ -180,7 +185,7 @@
     statusCards.servers = data.servers
     for (let i = 0; i < statusCards.servers.length; i++) {
       const ns = statusCards.servers[i];
-      const tooltip = statusCards.tooltips[i];
+      const tooltip = statusCards.tooltips[ns.ID];
       if (!ns.Host) ns.live = false
       else {
         const lastActive = new Date(ns.LastActive).getTime()
