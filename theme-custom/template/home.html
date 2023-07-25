@@ -3,6 +3,11 @@
 {{if ts .CustomCode}} {{.CustomCode|safe}} {{end}}
 {{template "theme-custom/menu" .}}
 
+<div id="loading">
+  <div class="mdui-spinner mdui-spinner-colorful mdui-m-b-1"></div>
+  <div>Loading...</div>
+</div>
+
 <div id="app">
   <div class="mdui-panel" mdui-panel>
     <div class="mdui-panel-item mdui-panel-item-open" v-for="group in groups">
@@ -175,6 +180,8 @@
   const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
   const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws');
   ws.onopen = function (evt) {
+    mdui.$(document.body).addClass('nezha-loaded');
+
     mdui.snackbar({
       message: '{{tr "RealtimeChannelEstablished"}}'
     });

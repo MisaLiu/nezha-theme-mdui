@@ -19,6 +19,20 @@ body.mdui-theme-layout-dark .mdui-drawer {
     }
 }
 
+main.mdui-container #loading {
+    text-align: center;
+}
+main.mdui-container #app {
+    display: none;
+}
+
+body.nezha-loaded main.mdui-container #loading {
+    display: none;
+}
+body.nezha-loaded main.mdui-container #app {
+    display: block;
+}
+
 .mdui-card-content .value-display {
     margin: 12px 0 0 0;
 }
