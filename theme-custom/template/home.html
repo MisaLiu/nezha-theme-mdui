@@ -69,6 +69,7 @@
 {{template "theme-custom/footer" .}}
 <script>
   const initData = JSON.parse('{{.Servers}}').servers;
+  let canShowConnectError = false;
   var statusCards = new Vue({
     el: '#app',
     delimiters: ['@#', '#@'],
@@ -177,44 +178,57 @@
       '{{tr "Version"}}: ' + server.Host.Version;
   }
 
-  const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
-  const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws');
-  ws.onopen = function (evt) {
-    mdui.$(document.body).addClass('nezha-loaded');
+  function connect() {
+    const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
+    const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws');
+    ws.onopen = function (evt) {
+      canShowConnectError = true;
+      mdui.$(document.body).addClass('nezha-loaded');
 
-    mdui.snackbar({
-      message: '{{tr "RealtimeChannelEstablished"}}'
-    });
-  }
-  ws.onmessage = function (evt) {
-    const oldServers = statusCards.servers
-    const data = JSON.parse(evt.data)
-    statusCards.servers = data.servers
-    for (let i = 0; i < statusCards.servers.length; i++) {
-      const ns = statusCards.servers[i];
-      const tooltip = statusCards.tooltips[ns.ID];
-      if (!ns.Host) ns.live = false
-      else {
-        const lastActive = new Date(ns.LastActive).getTime()
-        if (data.now - lastActive > 10 * 1000) {
-          ns.live = false
+      mdui.snackbar({
+        message: '{{tr "RealtimeChannelEstablished"}}'
+      });
+    }
+    ws.onmessage = function (evt) {
+      const oldServers = statusCards.servers
+      const data = JSON.parse(evt.data)
+      statusCards.servers = data.servers
+      for (let i = 0; i < statusCards.servers.length; i++) {
+        const ns = statusCards.servers[i];
+        const tooltip = statusCards.tooltips[ns.ID];
+        if (!ns.Host) ns.live = false
+        else {
+          const lastActive = new Date(ns.LastActive).getTime()
+          if (data.now - lastActive > 10 * 1000) {
+            ns.live = false
+          } else {
+            ns.live = true
+          }
+        }
+
+        if (ns.live) {
+          tooltip.$element.html(formatTooltip(ns));
         } else {
-          ns.live = true
+          tooltip.$element.text('{{tr "Offline"}}');
         }
       }
-
-      if (ns.live) {
-        tooltip.$element.html(formatTooltip(ns));
-      } else {
-        tooltip.$element.text('{{tr "Offline"}}');
-      }
+      statusCards.groups = groupingData(statusCards.servers, "Tag")
     }
-    statusCards.groups = groupingData(statusCards.servers, "Tag")
+    ws.onclose = function () {
+      if (canShowConnectError) {
+        canShowConnectError = false;
+        mdui.snackbar({
+          message: '{{tr "RealtimeChannelDisconnect"}}'
+        });
+      }
+
+      setTimeout(() => connect(), 3000);
+    }
+    ws.onerror = function () {
+      ws.close();
+    }
   }
-  ws.onclose = function () {
-    mdui.snackbar({
-      message: '{{tr "RealtimeChannelDisconnect"}}'
-    });
-  }
+
+  connect();
 </script>
 {{end}}
