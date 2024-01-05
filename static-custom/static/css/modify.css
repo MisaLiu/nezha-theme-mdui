@@ -52,4 +52,43 @@ body.nezha-loaded main.mdui-container #app {
     display: -webkit-inline-box;
     width: 20px;
     height: 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.mdui-card.status-card.good {
+    background-color: #4caf50 !important;
+}
+.mdui-card.status-card.warning {
+    background-color: #ffc107 !important;
+}
+.mdui-card.status-card.danger {
+    background-color: #f44336 !important;
+}
+
+.status-text {
+    color: rgba(0,0,0,.38);
+}
+.status-text.good {
+    color: #4caf50 !important;
+}
+.status-text.warning {
+    color: #ff8f00 !important;
+}
+.status-text.danger {
+    color: #f44336 !important;
+}
+
+body.mdui-theme-layout-dark .mdui-card.status-card {
+    background-color: #424242;
+}
+body.mdui-theme-layout-dark .status-text {
+    color: rgba(255,255,255,.5);
+}
+@media (prefers-color-scheme: dark) {
+    body.mdui-theme-layout-auto .mdui-card.status-card.status-card {
+        background-color: #424242;
+    }
+    body.mdui-theme-layout-auto .status-text {
+        color: rgba(255,255,255,.5);
+    }
 }

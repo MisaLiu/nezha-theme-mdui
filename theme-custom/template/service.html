@@ -23,13 +23,13 @@
                 <td nowrap>
                     {{range $i,$d := $service.Delay}}
                         <div
-                            class="mdui-card status-card mdui-shadow-0 mdui-color-{{if (index $service.Up $i)}}green-500{{else}}{{if (index $service.Down $i)}}red-500{{else}}theme-disabled{{end}}{{end}}"
+                            class="mdui-card status-card mdui-shadow-0 {{className (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}"
                             mdui-tooltip="{content:'{{dayBefore $i}}, {{tr "Availability"}}:{{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}%, {{tr "AverageLatency"}}:{{float32f $d}}ms'}"
                         ></div>
                     {{end}}
                 </td>
                 <td nowrap>
-                    <span class="mdui-text-color-{{if $service.CurrentUp}}green-500{{else}}{{if $service.CurrentDown}}red-500{{else}}theme-disabled{{end}}{{end}}">
+                    <span class="status-text {{className (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}">
                         {{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}
                     </span>
                 </td>
