@@ -78,6 +78,31 @@ body.nezha-loaded main.mdui-container #app {
     color: #f44336 !important;
 }
 
+.traffic-used .traffic-used-text {
+    line-height: 20px;
+}
+
+.traffic-used.warning .mdui-progress.traffic-used-bar {
+    background-color: rgba(255,193,7,.2) !important;
+}
+.traffic-used.warning .mdui-progress.traffic-used-bar .mdui-progress-determinate {
+    background-color: #ffc107 !important;
+}
+
+.traffic-used.error .mdui-progress.traffic-used-bar {
+    background-color: rgba(244,67,54,.2) !important;
+}
+.traffic-used.error .mdui-progress.traffic-used-bar .mdui-progress-determinate {
+    background-color: #f44336 !important;
+}
+
+.traffic-used.offline .mdui-progress.traffic-used-bar {
+    background-color: rgba(158,158,158,.2) !important;
+}
+.traffic-used.offline .mdui-progress.traffic-used-bar .mdui-progress-determinate {
+    background-color: #9e9e9e !important;
+}
+
 body.mdui-theme-layout-dark .mdui-card.status-card {
     background-color: #424242;
 }

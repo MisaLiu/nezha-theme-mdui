@@ -39,5 +39,52 @@
     </table>
 </div>
 
+{{if .CycleTransferStats}}
+    <h2 class="mdui-text-center mdui-typo-display-1">{{tr "CycleTransferStats"}}</h2>
+
+    <div class="mdui-table-fluid">
+        <table class="mdui-table mdui-table-hoverable">
+            <thead>
+                <tr>
+                    <th nowrap>ID</th>
+                    <th nowrap>{{tr "Rules"}}</th>
+                    <th nowrap>{{tr "Server"}}</th>
+                    <th nowrap>{{tr "From"}}</th>
+                    <th nowrap>{{tr "To"}}</th>
+                    <th nowrap>MAX</th>
+                    <th nowrap>MIN</th>
+                    <th nowrap>{{tr "NextCheck"}}</th>
+                    <th nowrap>{{tr "CurrentUsage"}}</th>
+                    <th nowrap>{{tr "Transleft"}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $id, $stats := .CycleTransferStats}}
+                {{range $innerId, $transfer := $stats.Transfer}}
+                {{$TransLeftPercent := TransLeftPercent (UintToFloat $transfer) (UintToFloat $stats.Max)}}
+                    <tr>
+                        <td nowrap>{{$id}}</td>
+                        <td nowrap>{{$stats.Name}}</td>
+                        <td nowrap>{{index $stats.ServerName $innerId}}</td>
+                        <td nowrap>{{$stats.From|tf}}</td>
+                        <td nowrap>{{$stats.To|tf}}</td>
+                        <td nowrap>{{$stats.Max|bf}}</td>
+                        <td nowrap>{{$stats.Min|bf}}</td>
+                        <td nowrap>{{(index $stats.NextUpdate $innerId)|sft}}</td>
+                        <td nowrap>{{$transfer|bf}}</td>
+                        <td nowrap class="traffic-used {{TransClassName $TransLeftPercent}}">
+                            <div class="traffic-used-text mdui-typo-caption">{{TransLeft $stats.Max $transfer}} / {{$TransLeftPercent}} %</div>
+                            <div class="mdui-progress traffic-used-bar">
+                                <div class="mdui-progress-determinate" style="width: {{$TransLeftPercent}}%;"></div>
+                            </div>
+                        </td>
+                    </tr>
+                {{end}}
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+{{end}}
+
 {{template "theme-custom/footer" .}}
 {{end}}
