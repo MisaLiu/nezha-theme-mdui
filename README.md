@@ -2,6 +2,10 @@
 
 自行制作的另一个哪吒面板 MDUI 主题。
 
+## 本主题仅支持 [`v0.20.13`](https://github.com/nezhahq/nezha/releases/tag/v0.20.13) 及更早版本的面板
+
+对于 [`v1.0.0`](https://github.com/nezhahq/nezha/releases/tag/v1.0.0) 及更新的版本将择日另外适配。
+
 ## Preview
 
 ![服务器列表截图](/screenshot/server.png "服务器列表截图")
@@ -22,7 +26,7 @@
 * 如果你是从之前的版本升级上来的：
     1. 停止运行面板，然后删除 `/opt/nezha/dashboard/theme-custom` 文件夹
     2. 下载本主题最新的 release，然后上传至 `/opt/nezha/dashboard` 并解压
-    3. 打开 `/opt/nezha/dashboard/docker-compose.yaml` 文件，更新其中挂载目录的部分：   
+    3. 打开 `/opt/nezha/dashboard/docker-compose.yaml` 文件，更新其中挂载目录的部分：
         旧的挂载配置内容：
         ```yaml
         #...
