@@ -1,0 +1,8 @@
+{
+  "name": "nezha-theme-mdui",
+  "description": "Anoher MDUI theme for nezha.sh",
+  "maintainer": "MisaLiu <misaliu@misaliu.top>",
+  "repo": "https://github.com/MisaLiu/nezha-theme-mdui.git",
+  "version": "1.0.7",
+  "support_versions": "v0.20.13"
+}
