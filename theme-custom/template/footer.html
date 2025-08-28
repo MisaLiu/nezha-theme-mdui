@@ -10,13 +10,12 @@
     Theme by <a href="https://github.com/MisaLiu/nezha-theme-mdui" target="_blank">MisaLiu</a>
 </footer>
 
-<script src="https://cdn.staticfile.net/vue/2.6.14/vue.min.js"></script>
-<script src="/static/js/mdui.min.js"></script>
-<script src="/static/js/main.js?v20230417"></script>
+<script defer src="/static/js/mdui.min.js"></script>
+<script defer src="/static/js/main.js?v20230417"></script>
 <script>
-    (function () {
+    document.addEventListener('DOMContentLoaded', () => {
         updateLang({{.LANG }});
-    })();
+    });
 </script>
 </body>
 
